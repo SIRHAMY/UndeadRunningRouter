@@ -13,9 +13,10 @@ function initMap() {
   });
   directionsDisplay.setMap(map);
 
-  document.getElementById('submit').addEventListener('click', function() {
+  //document.getElementById('submit').addEventListener('click', function() {
+    console.log("Debug: Calculated and Display Route");
     calculateAndDisplayRoute(directionsService, directionsDisplay);
-  });
+  //});
 }
 
 function httpGetAsync(theUrl, callback)
@@ -26,13 +27,14 @@ function httpGetAsync(theUrl, callback)
           callback(xmlHttp.responseText);
   }
   xmlHttp.open("GET", theUrl, true); // true for asynchronous
-  xmlHttp.send(req);
+  xmlHttp.send(null);
 }
 
 //Implement http call to backend here
 function calculateNewRoute(req, __callback) {
-  httpGetAsync("http://localhost:8000/api/update-route", function() {
-
+  httpGetAsync("http://localhost:8000/api/update-route", function(res) {
+    console.log("Debug: Attempting to hit backend");
+    console.log("Debug: res = " + res);
   });
 }
 
