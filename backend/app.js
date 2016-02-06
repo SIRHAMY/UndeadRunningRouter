@@ -17,7 +17,7 @@ var router = express.Router();
 app.use('/api', router);
 
 router.get('/update-route', function(req, res) {
-
+	//Testing mapRequests function here
 });
 
 app.listen(8000,function(){
