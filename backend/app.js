@@ -16,6 +16,10 @@ var router = express.Router();
 
 app.use('/api', router);
 
+router.get('/update-route', function(req, res) {
+
+});
+
 app.listen(8000,function(){
     console.log("Started listening on port", 8000);
 })
