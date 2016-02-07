@@ -25,6 +25,7 @@ router.get('/update-route', function(req, res) {
 	mapRequests(lat, lng, desiredDistance, function(err, markers) {
 		//Check for error
 		if (err) res.send(err);
+		//Change this to do something else with markers
 		else res.send(markers);
 	});
 });

@@ -2,7 +2,8 @@ var distance = require('google-distance');
 distance.apiKey = 'AIzaSyBTUTpeAhZpktVPYvYvZPMSRQIphU1BMHE';
 
 //Constants & storage structures
-var scale = 1333 / 23.35;   //1333km = 23.35 lat/long manhattan distance
+var latRatio = 121.8133;   //miles per 1 lat change
+var lngRatio = 72.4223;    //miles per 1 lng change
 //var steps = 20
 
 //Call this function with {new google.maps.LatLng(55.930385, -3.118425)} origin & desiredDist in km
@@ -12,7 +13,9 @@ exports.mapRequests = function (lat, lng, desiredDistance, done) {
 	var start = lat.toString() + ',' + lng.toString();
 	var markers = [start];
 	var distanceTravelled = 0;
-	var delta = desiredDistance / scale;
+	var delMile = desiredDistance * .06;
+	var delLng = delMile / lngRatio;
+	var delLat = delMile / latRatio;
 
 	function makeOneRequest(start, dest) {
 		//Make Http requests (google API)
@@ -32,7 +35,7 @@ exports.mapRequests = function (lat, lng, desiredDistance, done) {
 		console.log("err in oneReqDone", err)
 		numRequests += 1;
 		//Check max requests
-		if (numRequests > 40) {
+		if (numRequests > 20) {
 			console.log("Hit request limit")
 			return done(null, markers);
 		}
@@ -69,13 +72,13 @@ exports.mapRequests = function (lat, lng, desiredDistance, done) {
 		var dest;
 		//var from = start;
 		if (random == 0) {
-			dest = (lat + delta).toString() + ',' + lng.toString();
+			dest = (lat + delLat).toString() + ',' + lng.toString();
 		} else if (random == 1) {
-			dest = (lat - delta).toString() + ',' + lng.toString();
+			dest = (lat - delLat).toString() + ',' + lng.toString();
 		} else if (random == 2) {
-			dest = lat.toString() + ',' + (lng + delta).toString();
+			dest = lat.toString() + ',' + (lng + delLng).toString();
 		} else {
-			dest = lat.toString() + ',' + (lng - delta).toString();
+			dest = lat.toString() + ',' + (lng - delLng).toString();
 		}
 		//Call makeOneRequest
 		makeOneRequest(start, dest);
