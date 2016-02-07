@@ -2,6 +2,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var app = express();
+var jquery = require('jquery');
+var request = require('request');
+//var lib = require('lib/mapRequests.js');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,9 +30,9 @@ var router = express.Router();
 
 app.use('/api', router);
 
-router.get('/update-route', function(req, res, next) {
+router.post('/update-route', function(req, res, next) {
 
-  mapRequests(res.lat, res.lng, res.desiredDistance, function(err, markers) {
+  mapRequests.mapRequests(req.lat, req.lng, req.desiredDistance, function(err, markers) {
 		//Check for error
 		if (err) res.send(err);
 		//Change this to do something else with markers

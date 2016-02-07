@@ -19,15 +19,30 @@ function initMap() {
   //});
 }
 
-function httpGetAsync(theUrl, req, callback)
+var request = require('request');
+
+function httpGetAsync(theUrl, data, callback)
 {
+  /*
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
           callback(xmlHttp.responseText);
   }
-  xmlHttp.open("GET", theUrl + "?lat=" + req.lat + "&lng=" + req.lng + "&desiredDistance=" + 4, true); // true for asynchronous
-  xmlHttp.send(null);
+  xmlHttp.open("POST", theUrl, true); // true for asynchronous
+  xmlHttp.setRequestHeader("Content-type", "application/json");
+  xmlHttp.send(JSON.stringify(data));
+  */
+
+  request.put(
+    { uri: theUrl
+    , 'content-type': 'application/json'
+        ,  body: JSON.stringify(data),
+        }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+
+    }
+    });
 }
 
 //Implement http call to backend here
@@ -41,7 +56,7 @@ function calculateNewRoute(req, res, next) {
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   //Need to update this with real latitude and longitude
   var waypts = [];
-  calculateNewRoute({lat: -34, lng: 20}, function(err, res) {
+  calculateNewRoute({lat: -34, lng: 20, desiredDistance: 4}, function(err, res) {
     //var checkboxArray = document.getElementById('waypoints');
     var start;
 
