@@ -32,7 +32,7 @@ function httpGetAsync(theUrl, callback)
 
 //Implement http call to backend here
 function calculateNewRoute(req, __callback) {
-  httpGetAsync("http://localhost:8000/api/update-route", function(res) {
+  httpGetAsync("http://undeadrunningrouter.elasticbeanstalk.com/api/update-route", function(res) {
     console.log("Debug: Attempting to hit backend");
     console.log("Debug: res = " + res);
   });

@@ -1,7 +1,6 @@
 {
   "name": "rrbackend",
   "version": "0.0.1",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "node app.js"
@@ -10,6 +9,17 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.14.2",
+    "express": "^4.13.4",
     "node": "0.0.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SIRHAMY/UndeadRunningRouter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SIRHAMY/UndeadRunningRouter/issues"
+  },
+  "homepage": "https://github.com/SIRHAMY/UndeadRunningRouter#readme",
+  "description": ""
 }
