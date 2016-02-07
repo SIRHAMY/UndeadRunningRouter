@@ -1,61 +1,86 @@
-// var gMap = require("googlemaps");
-// var GoogleMapsAPI = require('../node_modules/googlemaps/lib/index');
-// var distance = require('../node_modules/googlemaps/lib/distance');
+var distance = require('google-distance');
+distance.apiKey = 'AIzaSyBTUTpeAhZpktVPYvYvZPMSRQIphU1BMHE';
 
 //Constants & storage structures
-var scale = 1333 / 23.35   //1333km = 23.35 lat/long manhattan distance
+var scale = 1333 / 23.35;   //1333km = 23.35 lat/long manhattan distance
 //var steps = 20
 
 //Call this function with {new google.maps.LatLng(55.930385, -3.118425)} origin & desiredDist in km
-function search(origin, desiredDistance) {
-	var markers = [origin];
+exports.mapRequests = function (lat, lng, desiredDistance, done) {
+
+	var numRequests = 0;
+	var start = lat.toString() + ',' + lng.toString();
+	var markers = [start];
 	var distanceTravelled = 0;
 	var delta = desiredDistance / scale;
-	var directions = [delta, -delta];
-	while (distanceTravelled < (desiredDistance / 2)) {
-		var random = Math.floor(Math.random() * (4));
-		var service = new google.maps.DistanceMatrixService();
-		var destination;
-		if (random== 0) {
-			destination = new google.maps.LatLng({lat: origin.lat() + delta, lng: origin.lng()});
-		} else if (random == 1) {
-			destination = new google.maps.LatLng({lat: origin.lat() - delta, lng: origin.lng()});
-		} else if (random == 2) {
-			destination = new google.maps.LatLng({lat: origin.lat(), lng: origin.lng() + delta});
-		} else {
-			destination = new google.maps.LatLng({lat: origin.lat(), lng: origin.lng() - delta});
-		}
-		service.getDistanceMatrix({
-		    origins: origin,
-		    destinations: destination,
-		    travelMode: google.maps.TravelMode.WALKING,
-		    avoidHighways: true,
-		}, function callback(response, status) {
-				if (status == google.maps.DistanceMatrixStatus.OK) {
-			    	var origins = response.originAddresses;
-			    	var destinations = response.destinationAddresses;
-			    	for (var i = 0; i < origins.length; i++) {
-			      		var results = response.rows[i].elements;
-			      		for (var j = 0; j < results.length; j++) {
-					        var element = results[j];
-					        var distance = element.distance.text;
-					        var from = origins[i];
-					        var to = destinations[j];
-					    }
-					}
-				}
-			}
-		);
-		distanceTravelled += distance;
-		origin = to;
-		markers.push(origin);
+
+	function makeOneRequest(start, dest) {
+		//Make Http requests (google API)
+		//These are raw latitudes & longitudes
+		var from;
+		var err;
+		var data;
+		var dist;
+
+		var getParams = {index: 1, origin: start, destination: dest, mode: 'walking'};
+
+		distance.get(getParams, oneReqDone);
+		markers.push(dest);
 	}
+
+	function oneReqDone(err, data, distanceTravelled) {
+		console.log("err in oneReqDone", err)
+		numRequests += 1;
+		//Check max requests
+		if (numRequests > 40) {
+			console.log("Hit request limit")
+			return done(null, markers);
+		}
+		//If error and only 2 points, return done(err)
+		if (markers.length == 2 && err) {
+			console.log("Couldn't find single correct point")
+			return done(err);
+		}
+		//If error and more than 2 (3), then pop from markers & call chooseNewDest
+		if (markers.length > 2 && err) {
+			markers.pop();
+			return chooseNewDestination(markers[markers.length - 1]);
+		}
+		//if (err) return done(err);
+		console.log("data from oneReqDone", data.distanceValue);
+		//Check distance & iterations
+		if (distanceTravelled > (desiredDistance / 2) || numRequests > 20) {
+			//If meets criteria, call doneCallBack
+			//Shouldn't I pass 
+			console.log("Success");
+			done(err, markers)
+		} else {
+			//If doesn't meet criteria, chooseNewDestination
+			chooseNewDestination(markers[markers.length - 1]);
+		}
+	}
+
+	function chooseNewDestination(prev) {
+		//Choose new random destination
+		var random = Math.floor(Math.random() * (4));
+		var dArr = prev.split(",");
+		var lat = Number(dArr[0]);
+		var lng = Number(dArr[1]);
+		var dest;
+		//var from = start;
+		if (random == 0) {
+			dest = (lat + delta).toString() + ',' + lng.toString();
+		} else if (random == 1) {
+			dest = (lat - delta).toString() + ',' + lng.toString();
+		} else if (random == 2) {
+			dest = lat.toString() + ',' + (lng + delta).toString();
+		} else {
+			dest = lat.toString() + ',' + (lng - delta).toString();
+		}
+		//Call makeOneRequest
+		makeOneRequest(start, dest);
+	}
+
+	chooseNewDestination(start);
 	return markers;
-}
-
-
-
-
-module.exports = {
-	search: search,
 }
