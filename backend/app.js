@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,7 +27,7 @@ var router = express.Router();
 
 app.use('/api', router);
 
-router.get('/update-route', function(req, res) {
+router.get('/update-route', function(req, res, next) {
 
   mapRequests(res.lat, res.lng, res.desiredDistance, function(err, markers) {
 		//Check for error
@@ -56,6 +57,6 @@ router.get('/update-route', function(req, res) {
   });*/
 });
 
-app.listen(8000,function(){
-    console.log("Started listening on port", 8000);
+app.listen(8081,function(){
+    console.log("Started listening on port", 8081);
 })
