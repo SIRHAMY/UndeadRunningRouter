@@ -1,6 +1,7 @@
 var config = require('config');
-
 var map;
+
+var request = require('request');
 function initMap() {
 
   //Find curr lat, lng
@@ -14,12 +15,10 @@ function initMap() {
   directionsDisplay.setMap(map);
 
   //document.getElementById('submit').addEventListener('click', function() {
-    console.log("Debug: Calculated and Display Route");
+    console.log("Debug: Calculate and Display Route");
     calculateAndDisplayRoute(directionsService, directionsDisplay);
   //});
 }
-
-var request = require('request');
 
 function httpGetAsync(theUrl, data, callback)
 {
@@ -34,15 +33,17 @@ function httpGetAsync(theUrl, data, callback)
   xmlHttp.send(JSON.stringify(data));
   */
 
-  request.put(
-    { uri: theUrl
-    , 'content-type': 'application/json'
-        ,  body: JSON.stringify(data),
-        }, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
+  request(
+    { method: 'PUT'
+    , uri: theUrl
+    ,  'content-type': 'application/json'
+        ,  body: JSON.stringify(data)
 
-    }
-    });
+    }, function (error, response, body) {
+  if (!error && response.statusCode == 200) {
+
+  }
+})
 }
 
 //Implement http call to backend here
@@ -138,3 +139,5 @@ function drawRoute() {
    // Add a path for the entire route.
    map.addPath(route.overview_polyline.points);
  }
+
+ //**mapRequests

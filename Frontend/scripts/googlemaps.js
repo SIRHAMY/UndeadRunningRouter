@@ -8,8 +8,8 @@ function initMap() {
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34, lng: 20},
-    zoom: 8
+    center: {lat: 33.77, lng: -84.39},
+    zoom: 13
   });
   directionsDisplay.setMap(map);
 
@@ -40,25 +40,43 @@ function calculateNewRoute(req, __callback) {
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   //Need to update this with real latitude and longitude
-  var waypts = [];
-  calculateNewRoute({lat: -34, lng: 20}, function(err, res) {
+
+    var waypts = [];
+    var backlog = [];
+
+    for(var j = 0; j < 10; j++) {
+      var rand = Math.random();
+      rand = (rand - 1) * 2;
+
+      var rand2 = Math.random();
+      rand2 = (rand2 - 1) * 2;
+
+
+      backlog.push({lat: 33.77 + rand, lng: -84.39 + rand2});
+    }
+
+  //calculateNewRoute({lat: -34, lng: 20}, function(err, res) {
     //var checkboxArray = document.getElementById('waypoints');
-    var start;
+    var start = null;
+
+    console.log("Debug: " + backlog);
 
     //We're only worried about circuits right now, so start == end
-    for (var i = 1; i < res.length; i++) {
-        if(i == 0) start = res.splice(i, 1);
+    for (var i = 9; i >= 0; i--) {
+        if(i == 0) start = backlog.splice(i, 1);
         else if(i != 0) {
+          var curr = backlog.splice(i, 1);
           waypts.push({
-            location: res.splice(i, 1),
+            location: google.maps.LatLng(curr.lat, curr.lng),
             stopover: true
           });
         }
     }
 
+
     directionsService.route({
-      origin: start,
-      destination: start,
+      origin: new google.maps.LatLng(start.lat, start.lng),
+      destination: new google.maps.LatLng(start.lat, start.lng),
       waypoints: waypts,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING,
@@ -81,7 +99,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         window.alert('Directions request failed due to ' + status);
       }
     });
-  });
 
 }
 
