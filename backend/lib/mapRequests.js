@@ -54,7 +54,6 @@ exports.mapRequests = function (lat, lng, desiredDistance, done) {
 		//Check distance & iterations
 		if (distanceTravelled > (desiredDistance / 2) || numRequests > 20) {
 			//If meets criteria, call doneCallBack
-			//Shouldn't I pass
 			console.log("Success");
 			done(err, markers)
 		} else {

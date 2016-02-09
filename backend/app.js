@@ -4,7 +4,7 @@ var cors = require('cors');
 var app = express();
 var jquery = require('jquery');
 var request = require('request');
-//var lib = require('lib/mapRequests.js');
+var mapRequests = require('./lib/mapRequests.js').mapRequests;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -53,11 +53,24 @@ router.post('/update-route', function(req, res, next) {
     xmlHttp.setRequestHeader("Content-type", "application/json");
     xmlhttp.send(data);
   }
+});
 
   /*httpGetAsync("http://undeadrunningrouter.elasticbeanstalk.com/api/update-route", function(res) {
     console.log("Debug: Attempting return data to frontend");
     console.log("Debug: res = " + res);
   });*/
+
+router.get('/update-route', function(req, res) {
+	// alert("Teesting in progress");
+	var lat = 30.44;
+	var lng = -84.29;
+	var desiredDistance = 10;
+	mapRequests(lat, lng, desiredDistance, function(err, markers) {
+		//Check for error
+		if (err) res.send(err);
+		//Change this to do something else with markers
+		else res.send(markers);
+	});
 });
 
 app.listen(8081,function(){
