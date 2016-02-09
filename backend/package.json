@@ -9,8 +9,12 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.14.2",
+    "cors": "^2.7.1",
     "express": "^4.13.4",
-    "node": "0.0.0"
+    "google-distance": "^1.0.1",
+    "jquery": "^2.2.0",
+    "node": "0.0.0",
+    "request": "^2.69.0"
   },
   "devDependencies": {},
   "repository": {
